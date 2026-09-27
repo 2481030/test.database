@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan ITS Certification Database</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF1F5;--panel-solid:#fff;--border:rgba(15,23,42,.13);--text:#101B26;--text-muted:#5B6B7C;--accent:#1D6FA5;--accent-soft:rgba(29,111,165,.12);--accent-2:#A9741F;--accent-2-soft:rgba(169,116,31,.14);--success:#1F8F5F;--success-soft:rgba(31,143,95,.13);--danger:#C7443B;--danger-soft:rgba(199,68,59,.11);--shadow:0 18px 40px -22px rgba(16,27,38,.4);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root{--bg:#0B1420;--panel-solid:#121D2E;--border:rgba(255,255,255,.11);--text:#E8ECF1;--text-muted:#8FA0B3;--accent:#5FB3E8;--accent-soft:rgba(95,179,232,.15);--accent-2:#E3B65C;--accent-2-soft:rgba(227,182,92,.15);--success:#4FBF83;--success-soft:rgba(79,191,131,.15);--danger:#EF8A83;--danger-soft:rgba(239,138,131,.15);--shadow:0 18px 50px -22px rgba(0,0,0,.7)}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:radial-gradient(900px 420px at 90% -10%,var(--accent-soft),transparent),var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'IBM Plex Mono',monospace}
+#app{max-width:860px;margin:0 auto;padding:16px 16px 48px}
+.hide{display:none!important}
+section{display:none}section.on{display:block}
+.card{background:var(--panel-solid);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:24px;position:relative}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;border-radius:18px 18px 0 0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;margin-bottom:18px;background:var(--panel-solid);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand i{font-style:normal;flex:none;width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--accent),var(--accent-2));color:#fff;display:grid;place-items:center;font:700 15px 'Fraunces',serif;box-shadow:0 6px 14px -6px rgba(29,111,165,.55)}
+.brand b{display:block;font-size:13px}.brand small{color:var(--text-muted);font-size:11.5px}
+.tr{display:flex;gap:8px;align-items:center}
+.chip{font:600 13px 'IBM Plex Mono',monospace;padding:6px 11px;border-radius:9px;background:var(--accent-2-soft);color:var(--accent-2)}
+.chip.low{background:var(--danger-soft);color:var(--danger)}
+.ib{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:none;color:var(--text);font-size:16px;cursor:pointer}
+
+.btn{border:0;border-radius:11px;padding:12px 20px;font:600 14.5px 'Inter',sans-serif;cursor:pointer;color:var(--text)}
+.btn:focus-visible,.opt:focus-visible,.ib:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pri{background:var(--accent);color:#fff;box-shadow:0 10px 20px -12px rgba(29,111,165,.6);transition:transform .15s,box-shadow .15s}
+.pri:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 24px -12px rgba(29,111,165,.7)}
+.ghost{background:none;border:1px solid var(--border)}
+.btn:disabled{opacity:.4;cursor:not-allowed}.block{width:100%}
+
+.hero h1{font:700 clamp(28px,6vw,42px)/1.1 'Fraunces',serif;margin:10px 0 12px}
+.hero p{color:var(--text-muted);line-height:1.6;margin:0 0 20px;max-width:56ch}
+.kick{font-size:12.5px;font-weight:600;color:var(--accent-2)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.stats div{flex:1;min-width:110px;padding:12px 14px;border:1px solid var(--border);border-radius:12px}
+.stats b{display:block;font:600 22px 'Fraunces',serif;color:var(--accent)}.stats span{font-size:12px;color:var(--text-muted)}
+.sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:14px}
+.setc{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1.5px solid var(--border);border-radius:13px;cursor:pointer}
+.setc:has(input:checked){border-color:var(--accent-2);background:var(--accent-2-soft)}
+.setc input{margin-top:3px;accent-color:var(--accent-2)}
+.setc b{display:block;font-size:14.5px;margin-bottom:2px}.setc span{font-size:12.8px;color:var(--text-muted);line-height:1.45}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-bottom:14px}
+.mode{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1.5px solid var(--border);border-radius:13px;cursor:pointer}
+.mode:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.mode input{margin-top:3px;accent-color:var(--accent)}
+.mode b{display:block;font-size:14.5px;margin-bottom:2px}.mode span{font-size:12.8px;color:var(--text-muted);line-height:1.45}
+.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin:0 0 18px;cursor:pointer}
+.secttl{font:600 12.5px 'Inter';color:var(--text-muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:.03em}
+
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.track{flex:1;height:7px;border-radius:9px;background:var(--border);overflow:hidden}
+.track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s}
+.prog span{font-size:12px;color:var(--text-muted)}
+.mot{font-size:13px;color:var(--accent-2);margin:0 0 12px;min-height:18px}
+.qh{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:14px}
+.badge{font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.badge.correct{background:var(--success-soft);color:var(--success)}.badge.partial{background:var(--accent-2-soft);color:var(--accent-2)}
+.badge.wrong{background:var(--danger-soft);color:var(--danger)}.badge.empty{background:var(--border);color:var(--text-muted)}
+.flag{border:1px solid var(--border);background:none;color:var(--text-muted);border-radius:99px;padding:5px 11px;font:600 12px 'Inter';cursor:pointer}
+.flag.on{color:var(--accent-2);border-color:var(--accent-2);background:var(--accent-2-soft)}
+.qt{font-size:16.5px;line-height:1.55;margin:0 0 14px;white-space:pre-line}
+.extra{margin:0 0 16px}
+.hint{font-size:12.5px;color:var(--accent-2);margin:0 0 10px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;padding:12px 13px;border:1.5px solid var(--border);border-radius:12px;background:none;color:var(--text);font:400 14.5px/1.5 'Inter';cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt:disabled{cursor:default;color:var(--text)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--success);background:var(--success-soft)}.opt.no{border-color:var(--danger);background:var(--danger-soft)}
+.mk{flex:none;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);display:grid;place-items:center;font-size:12px;margin-top:1px}
+.radio .mk{border-radius:50%}.opt.sel .mk{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.ok .mk{background:var(--success);border-color:var(--success);color:#fff}.opt.no .mk{background:var(--danger);border-color:var(--danger);color:#fff}
+.opt em{display:block;font-size:12px;color:var(--success);font-style:normal;font-weight:600}
+.opt b{font:600 12.5px 'IBM Plex Mono',monospace;color:var(--text-muted);margin-right:6px}
+.opt .code{display:block;white-space:pre-wrap;font-family:'IBM Plex Mono',monospace;font-size:12.3px;line-height:1.55;margin-top:2px}
+.tf{width:100%;border-collapse:collapse;font-size:14px}
+.tf th{font-size:12px;color:var(--text-muted);text-align:center}.tf th:first-child{text-align:left}
+.tf td,.tf th{padding:10px 8px;border-bottom:1px solid var(--border)}
+.tf td+td{text-align:center}.tf input{width:17px;height:17px;accent-color:var(--accent)}
+.tf tr.ok td:first-child{color:var(--success)}.tf tr.no td:first-child{color:var(--danger)}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 0;border-bottom:1px dashed var(--border);font-size:14px}
+.mrow>span{flex:1;min-width:180px}.mrow.ok>span{color:var(--success)}.mrow.no>span{color:var(--danger)}
+select{font:12.5px 'IBM Plex Mono',monospace;padding:9px 11px;border-radius:9px;border:1px solid var(--border);background:var(--panel-solid);color:var(--text);min-width:170px}
+.fix{font-size:12.5px;font-weight:600;margin-top:3px;color:var(--success)}
+.fb{margin-top:16px;padding:13px 15px;border-radius:12px;border:1px solid var(--border);background:var(--accent-soft);font-size:13.5px;line-height:1.55}
+.fb p{margin:5px 0 0;color:var(--text-muted)}
+.fb.ok{background:var(--success-soft);border-color:var(--success)}.fb.no{background:var(--danger-soft);border-color:var(--danger)}.fb.gd{background:var(--accent-2-soft);border-color:var(--accent-2)}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+.data-table{width:100%;border-collapse:collapse;font:12.5px 'IBM Plex Mono',monospace}
+.data-table th,.data-table td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+.data-table th{background:var(--accent-soft);color:var(--accent)}
+.table-scroll{overflow-x:auto}
+.sql-block{font:12.8px/1.5 'IBM Plex Mono',monospace;background:var(--accent-soft);border:1px solid var(--border);border-radius:10px;padding:12px 14px;white-space:pre-wrap}
+
+.dback{position:fixed;inset:0;background:rgba(5,10,16,.45);z-index:29;opacity:0;pointer-events:none;transition:opacity .2s}
+.dback.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(320px,88vw);z-index:30;background:var(--panel-solid);border-left:1px solid var(--border);padding:calc(18px + env(safe-area-inset-top,0px)) 18px 18px;transform:translateX(100%);transition:transform .25s;overflow-y:auto}
+.drawer.open{transform:none}.drawer h4{font:600 18px 'Fraunces',serif;margin:0 0 6px}
+.drawer p{font-size:12px;color:var(--text-muted);margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:16px}
+.cell{aspect-ratio:1;border-radius:9px;border:1.5px solid var(--border);background:none;color:var(--text-muted);font:12px 'IBM Plex Mono',monospace;cursor:pointer;position:relative}
+.cell.ans{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.cell.okc{background:var(--success-soft);border-color:var(--success);color:var(--success)}.cell.noc{background:var(--danger-soft);border-color:var(--danger);color:var(--danger)}
+.cell.cur{outline:2px solid var(--text);outline-offset:2px}
+.cell.fl::after{content:"";position:absolute;top:-3px;right:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent-2)}
+
+.rhero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.gauge{position:relative;width:180px;height:180px;margin:4px 0}
+.gauge svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge circle{fill:none;stroke-width:11;stroke-linecap:round}
+.gauge .bg{stroke:var(--border)}.gauge .fg{transition:stroke-dashoffset 1s cubic-bezier(.3,.9,.4,1)}
+.gauge div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge b{font:600 40px 'Fraunces',serif;line-height:1}.gauge span{font-size:11.5px;color:var(--text-muted)}
+.verdict{font-weight:700;font-size:13px;padding:7px 18px;border-radius:99px}
+.verdict.pass{background:var(--success-soft);color:var(--success)}.verdict.fail{background:var(--danger-soft);color:var(--danger)}
+.rhero h2{font:600 22px 'Fraunces',serif;margin:10px 0 0}.rhero p{color:var(--text-muted);max-width:50ch;margin:4px 0 0;font-size:14px;line-height:1.55}
+.meta{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.meta b{display:block;font:600 15px 'IBM Plex Mono',monospace}.meta span{font-size:11px;color:var(--text-muted)}
+.dom{width:100%;margin-top:18px;text-align:left}
+.dom>div{margin-bottom:12px}.dom .t{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:5px}
+.dom .t span+span{font:12px 'IBM Plex Mono',monospace;color:var(--text-muted)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 66px);z-index:10;padding:8px 0;background:var(--bg)}
+.fl-b{border:1px solid var(--border);background:var(--panel-solid);color:var(--text);border-radius:99px;padding:8px 14px;font:600 13px 'Inter';cursor:pointer}
+.fl-b.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.ri{margin-bottom:14px;border-left:4px solid var(--border)}
+.ri.correct{border-left-color:var(--success)}.ri.wrong{border-left-color:var(--danger)}.ri.partial{border-left-color:var(--accent-2)}
+.ri .qh{align-items:center}.ri .qh span:first-child{font-weight:600;font-size:13.5px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:50;white-space:nowrap}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:520px){.card{padding:18px 15px}.nav .btn{padding:12px 13px;font-size:13.5px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><i>DB</i><div><b>Fundamental Basis Data</b><small id="modeLbl">Pertemuan 1 &middot; Ganjil 2026</small></div></div>
+    <div class="tr"><span id="chip" class="chip hide"></span><button class="ib hide" id="navBtn" aria-label="Navigasi soal">&#9776;</button></div>
+  </header>
+
+  <section id="s-start" class="on">
+    <div class="card hero">
+      <span class="kick">Latihan sertifikasi Basis Data &middot; 3 paket soal tersedia</span>
+      <h1>Hallo <span id="nm"></span>, Semangat berlatih nya! 🔥</h1>
+      <p>Setiap soal yang kamu kerjakan hari ini membuat ujian sesungguhnya terasa lebih ringan. Pilih paket soal, cara berlatih, lalu kita mulai.</p>
+      <div class="stats">
+        <div><b id="nq">0</b><span>Total soal</span></div>
+        <div><b>700</b><span>Skor lulus dari 1000</span></div>
+        <div><b id="best">-</b><span>Skor terbaikmu</span></div>
+      </div>
+      <p class="secttl">Paket soal</p>
+      <div class="sets" id="setPick"></div>
+      <p class="secttl">Mode latihan</p>
+      <div class="modes">
+        <label class="mode"><input type="radio" name="mode" value="latihan" checked><div><b>🎯 Mode Latihan</b><span>Jawaban langsung diperiksa dengan penjelasan. Tanpa batas waktu, ada hitungan benar beruntun.</span></div></label>
+        <label class="mode"><input type="radio" name="mode" value="ujian"><div><b>⏱ Mode Ujian</b><span>60 menit seperti ujian asli. Pembahasan muncul setelah dikumpulkan.</span></div></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="shuf"> Acak urutan soal</label>
+      <button class="btn pri block" id="go">Mulai berlatih</button>
+    </div>
+  </section>
+
+  <section id="s-exam">
+    <div class="prog"><div class="track"><i id="pf"></i></div><span class="mono" id="pl"></span></div>
+    <p class="mot" id="mot"></p>
+    <div class="card">
+      <div class="qh"><span class="badge" id="qb"></span><button class="flag" id="flag">🚩 Tandai</button></div>
+      <div id="qbody"></div><div id="fb"></div>
+    </div>
+    <div class="nav">
+      <button class="btn ghost" id="prev">&larr; Sebelumnya</button>
+      <button class="btn pri hide" id="chk">Periksa jawaban</button>
+      <button class="btn pri" id="next">Berikutnya &rarr;</button>
+    </div>
+  </section>
+
+  <section id="s-res">
+    <div class="card rhero">
+      <span class="kick" id="resKick">Hasil latihanmu</span>
+      <div class="gauge"><svg viewBox="0 0 180 180"><circle class="bg" cx="90" cy="90" r="78"/><circle class="fg" id="gfg" cx="90" cy="90" r="78"/></svg><div><b class="mono" id="sc">0</b><span>dari 1000 poin</span></div></div>
+      <div class="verdict" id="vd"></div>
+      <h2 id="hl"></h2><p id="msg"></p>
+      <div class="meta">
+        <div><b id="m1"></b><span>Poin benar</span></div><div><b id="m2"></b><span>Persentase</span></div>
+        <div><b id="m3"></b><span>Waktu</span></div><div><b id="m4"></b><span>Tidak dijawab</span></div>
+      </div>
+      <div class="dom" id="dom"></div>
+      <div class="acts">
+        <button class="btn pri hide" id="redoWrong"></button>
+        <button class="btn ghost" id="redoAll">Ulangi semua soal</button>
+        <button class="btn ghost" id="home">Kembali ke awal</button>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div id="rlist"></div>
+  </section>
+</div>
+
+<div class="dback" id="dback"></div>
+<aside class="drawer" id="drawer">
+  <h4>Navigasi soal</h4>
+  <p>Biru: sudah dijawab. Hijau/merah: hasil pemeriksaan (mode latihan). Titik emas: ditandai.</p>
+  <div class="grid" id="grid"></div>
+  <button class="btn pri block" id="submit">Selesai &amp; lihat hasil</button>
+</aside>
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+const NAMA='Gosvelt Vallito Octrian Purba'; /* ubah di sini jika ingin nama lain */
+
+/* ===== util pembuat soal ===== */
+const tbl=(h,r)=>`<div class="table-scroll"><table class="data-table"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.map(w=>`<tr>${w.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const opt=a=>a.map((t,i)=>['ABCDEF'[i],t]);
+
+/* =====================================================================
+   PAKET 1 — Pertemuan 1 (48 soal)
+   ===================================================================== */
+const Q1=[];
+const dC='core',dS='storage',dR='relational',dM='manage';
+const sq=(id,d,text,o,c,e,x)=>Q1.push({id,domain:d,type:'single',text,options:opt(o),correct:c,expl:e,extra:x});
+const mq=(id,d,text,o,c,e,x)=>Q1.push({id,domain:d,type:'multi',chooseCount:2,text,options:opt(o),correct:c,expl:e,extra:x});
+const DT=['BIT','DECIMAL','VARCHAR','CHAR','INT','DATETIME'];
+const CH='ChapterID',LG='LanguageID';
+
+sq(1,dC,'The component that holds information for a single entry in a table is called a:',['Data type','Row','Column','View'],'B','Satu baris (row) menyimpan satu entri/record lengkap dalam tabel.');
+sq(2,dC,'Data in a database is stored in:',['Tables','Queries','Data types','Stored procedures'],'A','Data disimpan secara fisik di dalam tabel; query, tipe data, dan stored procedure hanya mengakses atau mendefinisikannya.');
+mq(3,dR,'Which two elements are required to define a column? (Choose two.)',['A name','A key','An index','A data type'],['A','D'],'Setiap kolom minimal membutuhkan nama dan tipe data; key dan index bersifat opsional.');
+sq(4,dC,'You need to store the first name, last name, and student ID for 100 students. This information will be stored in a table as:',['100 items and three cells.','100 rows and three columns.','three rows and 100 columns.','three items and 100 cells.'],'B','Setiap siswa menjadi satu baris, dan setiap atribut (nama depan, nama belakang, ID) menjadi satu kolom.');
+sq(5,dC,'This question requires that you evaluate the underlined text to determine if it is correct.\nIn a database table, each column represents a unique record.\n\nReview the underlined text ("each column represents a unique record"). If it makes the statement correct, select "No change is needed." If the statement is incorrect, select the answer choice that makes the statement correct.',['No change is needed','Table','Index','Row'],'D','Yang merepresentasikan satu record unik adalah baris (row), bukan kolom. Kolom merepresentasikan atribut/field.');
+Q1.push({id:6,domain:dC,type:'tf',text:'You are structuring a table in a relational database. For each statement, select True or False. You will receive partial credit for each correct selection.',rows:[{label:'Each value in a field in a table must be unique.',correct:false},{label:'Each row in a table must be unique.',correct:true},{label:'Each column name in a table must be unique.',correct:true}],expl:'Nilai field boleh berulang, tetapi setiap baris harus unik dan nama kolom dalam satu tabel tidak boleh sama.'});
+sq(7,dR,'Which feature does a relational database use to ensure that data entered into a column is valid?',['An attribute','A primary key','A constraint','An index'],'C','Constraint (mis. CHECK, NOT NULL) memvalidasi data yang boleh dimasukkan ke sebuah kolom.');
+sq(8,dR,'You are creating a table named Student to store StudentID, StudentName, and Age. Which statement correctly creates the table?',['CREATE TABLE Student (StudentID INT PRIMARY KEY, StudentName VARCHAR(100), Age INT);','CREATE VIEW Student (StudentID, StudentName, Age);','INSERT TABLE Student (StudentID, StudentName, Age);','CREATE DATABASE Student (StudentID, StudentName, Age);'],'A','CREATE TABLE adalah perintah DDL yang benar untuk membuat tabel baru beserta kolom dan tipe datanya.');
+sq(9,dR,`A charity needs to store each volunteer's given name, surname, telephone number, and email address. Which design is most appropriate?`,['Create one Volunteer table with a VolunteerID primary key and one column for each item.','Create a separate table for every volunteer.','Store all four values in one column.','Create one table for each individual attribute.'],'A','Praktik desain relasional standar: satu tabel dengan primary key, satu kolom per atribut.');
+sq(10,dR,'You have a table named Customer. You need to add a new column named District that stores up to 100 characters. Which statement should you use?',['ALTER TABLE Customer ADD District VARCHAR(100);','UPDATE TABLE Customer ADD District VARCHAR(100);','CREATE COLUMN District VARCHAR(100) IN Customer;','INSERT INTO Customer District VARCHAR(100);'],'A','ALTER TABLE ... ADD digunakan untuk menambahkan kolom baru pada tabel yang sudah ada.');
+sq(11,dR,'The Customers table contains a column named SSN. New regulations prohibit storing this information. Which statement correctly removes the SSN column?',['ALTER TABLE Customers DROP COLUMN SSN;','ALTER TABLE Customers REMOVE SSN;','DELETE COLUMN SSN FROM Customers;','DROP SSN FROM Customers;'],'A','ALTER TABLE ... DROP COLUMN adalah sintaks standar untuk menghapus kolom.');
+sq(12,dC,'Which key uniquely identifies a row in a table?',['foreign','primary','local','superkey'],'B','Primary key menjamin setiap baris dapat diidentifikasi secara unik.');
+sq(13,dC,'Which constraint ensures a unique value in the ID column for each customer?',['DISTINCT','FOREIGN KEY','SEQUENTIAL','PRIMARY KEY'],'D','PRIMARY KEY secara otomatis menegakkan keunikan nilai pada kolom tersebut.');
+sq(14,dC,'You accept an IT internship at a local charity. The charity wants you to help them with compliance and auditing requirements. You need to ensure that a column or combination of columns uniquely identifies each row of a table. Which constraint should you define?',['Primary key','Secondary key','Foreign key','Default key'],'A','Primary key (tunggal atau komposit) menjamin keunikan setiap baris.');
+sq(15,dC,'Which of the following statements is true regarding a composite key in a table?',['It is a primary key.','It is a primary or foreign key that consists of two or more attributes of the table.','It is a combination of the primary key and the foreign key.','It is a foreign key.'],'B','Composite key adalah key (primary atau foreign) yang terdiri dari dua kolom atau lebih.');
+mq(16,dR,'You accept an IT internship at a local charity. The charity has two tables in its data model, Chapter and Language, as shown below.',[CH,'Country','LanguageName','Region',LG,'City'],['A','E'],'Composite key ChapterLanguage dibentuk dari primary key kedua tabel asal: ChapterID dan LanguageID.',
+ tbl([CH,'City','Region','Country'],[[1,'Chicago','Illinois','USA'],[2,'Los Angeles','California','USA'],[3,'New York City','New York','USA'],[4,'Toronto','Ontario','Canada']])+'<div style="height:10px"></div>'+
+ tbl([LG,'LanguageName','Locale'],[[1,'English','USA'],[2,'English','Canada'],[3,'Spanish','Spain'],[4,'Spanish','Mexico'],[5,'French','France'],[6,'French','Canada'],[7,'German','Germany']])+
+ '<p style="font-size:13.5px;margin-top:14px;color:var(--text-muted)">You create a third table named ChapterLanguage to relate the Chapter and Language tables. You need to select columns from the Chapter and Language tables to create a composite primary key for the ChapterLanguage table. Which two columns should you select? (Choose two.)</p>');
+sq(17,dR,'Which table definition creates a composite primary key for an Enrollment table?',['PRIMARY KEY (StudentID, CourseID)','PRIMARY KEY (StudentID) and PRIMARY KEY (CourseID)','FOREIGN KEY (StudentID, CourseID)','UNIQUE (StudentID)'],'A','Composite primary key didefinisikan dengan menyertakan kedua kolom dalam satu klausa PRIMARY KEY.');
+sq(18,dR,'A Road table is created with RoadID INTEGER NOT NULL and Distance INTEGER NOT NULL, but no PRIMARY KEY or UNIQUE constraint. The table already contains RoadID 1234. What happens when INSERT INTO Road VALUES (1234, 36); is executed?',['The row is inserted because NOT NULL does not enforce uniqueness.','The statement fails because RoadID is automatically a primary key.','The existing row is automatically updated to Distance 36.','The statement fails because duplicate integer values are never allowed.'],'A','Tanpa PRIMARY KEY atau UNIQUE, NOT NULL saja tidak mencegah duplikasi nilai, sehingga baris tetap disisipkan.');
+sq(19,dS,'What defines the amount of storage space that is allocated to a value in a column?',['Format','Key','Data type','Validator'],'C','Tipe data (mis. INT, VARCHAR(n)) menentukan ukuran penyimpanan yang dialokasikan.');
+Q1.push({id:20,domain:dS,type:'match',text:'A school attendance table contains the following requirements. Match each field to the most appropriate data type.',rows:[{label:'StudentName: variable-length text',options:DT,correct:'VARCHAR'},{label:'GradeLevel: whole number',options:DT,correct:'INT'},{label:'DaysAbsent: one digit after the decimal',options:DT,correct:'DECIMAL'}],expl:'Teks panjang variabel: VARCHAR. Bilangan bulat: INT. Angka dengan pecahan desimal: DECIMAL.'});
+sq(21,dS,'An AccountNumber always consists of one letter followed by four digits. Which data type is most appropriate?',['CHAR(5)','VARCHAR(50)','INT','DECIMAL(5,0)'],'A','Panjang selalu tetap 5 karakter (1 huruf + 4 digit) dan bersifat alfanumerik, sehingga CHAR(5) paling sesuai.');
+sq(22,dS,'A coffee shop stores purchase charges and performs financial calculations on them. Which data type should be used?',['DECIMAL(10,2)','VARCHAR(20)','DATE','BOOLEAN'],'A','DECIMAL memberikan presisi eksak yang dibutuhkan untuk nilai uang dan perhitungan finansial.');
+sq(23,dS,'A table stores product quantities from 0 through 255. You want to minimize storage space. Which data type should you use?',['TINYINT','BIGINT','DECIMAL(18,2)','VARCHAR(10)'],'A','TINYINT menampung rentang 0-255 dengan ruang penyimpanan paling kecil (1 byte).');
+mq(24,dR,'Which two keys establish a relationship between two tables? (Choose two.)',['candidate','Foreign','Superkey','Local','Primary'],['B','E'],'Relasi antar tabel dibentuk dengan primary key di satu tabel yang direferensikan oleh foreign key di tabel lain.');
+sq(25,dR,'You have a Department table and an Employee table in your database. You need to ensure that an employee can be assigned to only an existing department. What should you apply to the Employee table?',['A primary key','An index','A foreign key','A unique constraint','A data type'],'C','Foreign key pada Employee yang merujuk ke Department memastikan nilai departemen valid.');
+sq(26,dR,'Which statement should you use to remove a foreign key?',['ALTER TABLE','DELETE TABLE','DELETE FOREIGN KEY','ALTER FOREIGN KEY'],'A','ALTER TABLE ... DROP CONSTRAINT digunakan untuk menghapus foreign key.');
+sq(27,dR,'You work as a Database Designer for Realtech Inc. You want to create two tables, Product and Order, such that a row in the Order table does not exist without a corresponding row in the Product table.',['Create the Product table, and then create the Order table. Create a third table used to join Product and Order by using FOREIGN KEY constraints.','Create the Product table, and then create the Order table that has a primary key referenced by the foreign key in the Product table.','Create the Product table, and then create the Order table. Create a primary key in both tables and form a one-to-one relationship.','Create the Product table, and then create the Order table that has a foreign key constraint that references the primary key in the Product table.'],'D','Order bergantung pada Product, sehingga Order menyimpan foreign key yang merujuk ke primary key Product.',
+ '<p style="font-size:13.5px;color:var(--text-muted);margin:0">Product: ProductID, ProductNumber, Date_of_manufacturing, SupplierID, ProductPrice, ProductQty<br>Order: OrderID, OrderDate, OrderQuantity, OrderPrice<br><br>While maintaining the integrity of this rule, what will you do to accomplish the task?</p>');
+sq(28,dR,'While attending college, you accept an IT internship at a local charity. The charity needs to report on data that is related and exists in two tables. You need to establish a relationship between the data that is in the two tables. Which constraint should you define?',['Foreign key','Index key','Link key','Default key'],'A','Foreign key adalah mekanisme standar untuk menghubungkan dua tabel.');
+sq(29,dR,'You have two tables named Salesperson and Sales. You need to ensure that each record in the Sales table has a valid associated salesperson record in the Salesperson table. Which database object should you add to the Sales table?',['Nonclustered index','Primary key','Foreign key','Clustered index'],'C','Foreign key pada Sales yang merujuk ke Salesperson menjamin validitas relasi.');
+sq(30,dR,'You are designing a database that must meet these requirements:\n\n\u2022 A table named MACHINE represents all the machines in a factory. The ID field uniquely identifies each machine.\n\u2022 A table named OPERATOR represents all the operators in a factory. The ID field uniquely identifies each operator.\n\u2022 Each operator can be assigned to zero or more machines.\n\u2022 Each machine can be assigned to zero or more operators.\n\nYou need to design the entity relationship diagram (ERD) to meet these requirements and enforce referential integrity. What should you do?',['Add a foreign key OperatorID directly into the MACHINE table.','Create a junction table, ASSIGNMENT, with MachineID and OperatorID as foreign keys referencing the primary key of each respective table.','Make the ID column in MACHINE and OPERATOR reference each other as foreign keys.','Merge MACHINE and OPERATOR into a single table.'],'B','Hubungan many-to-many antara dua tabel selalu diselesaikan dengan tabel penghubung (junction table) berisi dua foreign key.');
+mq(31,dM,'You are developing a SQL statement to create a table. Which two SQL keywords are valid to use in a CREATE TABLE statement? (Choose two.)',['CONSTRAINT','INSERT INTO','ORDER BY','PRIMARY KEY'],['A','D'],'CONSTRAINT dan PRIMARY KEY adalah klausa yang sah di dalam CREATE TABLE; INSERT INTO dan ORDER BY bukan bagian dari DDL ini.');
+sq(32,dR,'When a row in the Order table is deleted, the related rows in the OrderItem table are automatically deleted. Which referential action produces this behavior?',['ON DELETE CASCADE','ON DELETE SET DEFAULT','ON UPDATE CASCADE','ON DELETE RESTRICT'],'A','ON DELETE CASCADE meneruskan penghapusan ke baris terkait di tabel anak.');
+sq(33,dR,'You have a table that contains the following data. You break the table into the following two tables. This process is referred to as:',['defragmentation','normalization','fragmentation','denormalization'],'B','Memecah tabel untuk menghilangkan grup berulang (repeating group) adalah proses normalisasi.',
+ tbl(['ProductID','ProductName','Color1','Color2','Color3'],[[4545,'Shirt','Blue','Green','Purple']])+'<div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">'+tbl(['ProductID','ProductName'],[[4545,'Shirt']])+tbl(['ProductID','Color'],[[4545,'Blue'],[4545,'Green'],[4545,'Purple']])+'</div>');
+sq(34,dR,'You have a table that contains the following data. Which database term is used to describe the relationship between ProductID and ProductCategory?',['Cohort','Relationally dependent','Deterministic','Functionally dependent','Compositional'],'D','ProductCategory functionally dependent terhadap ProductID: setiap ProductID menentukan satu nilai ProductCategory.',
+ tbl(['ProductID','ProductCategory'],[[32,'books'],[25,'books'],[67,'movies'],[89,'movies']]));
+sq(35,dR,'Denormalization is performed in order to:',['Reduce redundancy.','Eliminate repeating groups.','Create smaller tables.','Improve query performance.'],'D','Denormalisasi sengaja menambah redundansi untuk mempercepat performa query pembacaan.');
+sq(36,dR,'You work at a restaurant and they ask you to help them with a data issue. They provide you with the following recipe data. You need to normalize the data to third normal form. How many tables should you create?',['1','2','3','4'],'C','Recipe, Ingredient, dan Category dipisah menjadi tiga tabel agar tidak ada dependensi transitif yang tersisa.',
+ tbl(['ID','RecipeName','PrimaryIngredient','Category'],[[1,'Chicken Parmesan','Chicken','Entree'],[2,'Parmesan-Crusted Chicken Strips','Chicken','Entree'],[3,'Spaghetti with Bacon','Bacon','Entree'],[4,'Bacon Popcorn','Bacon','Snack']]));
+sq(37,dR,'This question requires that you evaluate the underlined text to determine if it is correct.\nYou combine data from three tables into one table. The new table includes redundancy to optimize read performance.\nThe data in the new table has been denormalized.\n\nReview the underlined text ("denormalized"). If it makes the statement correct, select "No change is needed." If the statement is incorrect, select the answer choice that makes the statement correct.',['No change is needed','Normalized','Truncated','Indexed'],'A','Menggabungkan tabel dan menambah redundansi demi performa baca memang disebut denormalisasi, jadi pernyataan sudah benar.');
+mq(38,dR,'You need to normalize a database to first normal form. Which two requirements must you meet? (Choose two.)',['Exclude foreign keys.','Exclude repeating groups.','Exclude composite keys.','Exclude duplicate rows.'],['B','D'],'1NF mensyaratkan tidak ada grup berulang dan tidak ada baris duplikat.');
+sq(39,dR,'The following table records winners of pet competitions. Which column reveals a transitive dependency that prevents the table from satisfying third normal form?',['ID','Event','PetID','Birthdate'],'D','Birthdate bergantung pada PetID, bukan langsung pada primary key ID. Inilah dependensi transitif.',
+ tbl(['ID','Event','Year','PetID','Birthdate','City'],[[1,'Cutest Pet Fest',2009,'RG459','2008-06-23','Chicago'],[2,'Pet Babies Invitational',2010,'SP372','2009-08-12','Montreal'],[3,'Adorable Friends',2011,'BD116','2010-05-01','Atlanta'],[4,'AWHH Fest',2012,'FD228','2009-08-12','Detroit']]));
+sq(40,dM,'Which command should you use to give a user permission to read the data in a table?',['ALLOW SELECT','LET READ','PERMIT READ','GRANT SELECT'],'D','GRANT SELECT adalah perintah DCL standar untuk memberi izin baca.');
+sq(41,dM,'You assign User1 a set of permissions that include the WITH GRANT OPTION. The WITH GRANT OPTION enables User1 to:',['request a log of permission use.','delegate permissions to other users.','create new database users.',`view other users' permissions.`],'B','WITH GRANT OPTION memungkinkan penerima hak akses meneruskan hak tersebut ke pengguna lain.');
+sq(42,dM,'In which situation do you need to perform a restore on a database?',['when data becomes corrupted in the database','when you need to roll back a transaction','when you encounter an error in your application','when data needs to be deleted from the database'],'A','Restore dari backup dilakukan ketika database rusak/corrupt.');
+sq(43,dM,'Which database term is used to describe the process of applying a backup to a damaged or corrupt database?',['Recover','Restore','Commit','Attach'],'B','"Restore" adalah istilah baku untuk menerapkan backup ke database yang rusak.');
+sq(44,dM,`You need to remove User1's permission to view data in the Customer table. Which statement should you use?`,['REVOKE SELECT ON Customer FROM User1;','GRANT SELECT ON Customer TO User1;','DROP USER User1;',`DELETE FROM Customer WHERE UserName = 'User1';`],'A','REVOKE mencabut hak akses yang sebelumnya diberikan, tanpa menghapus user atau datanya.');
+sq(45,dM,'On which database structure does an update statement operate?',['Table','User','Trigger','Role'],'A','UPDATE mengubah baris data di dalam sebuah tabel.');
+sq(46,dM,'What is one difference between an update statement and a delete statement?',['An update statement can change only one row.','A delete statement cannot use a where clause.','An update statement does not remove rows from a table.','A delete statement works only within a stored procedure.'],'C','UPDATE mengubah nilai kolom pada baris yang ada, sedangkan DELETE menghapus baris. UPDATE tidak pernah menghapus baris.');
+sq(47,dM,'You execute a statement inside a transaction to delete 100 rows from a table. The transaction fails after only 40 rows are deleted. What is the result in the database?',['The table will be corrupted.','Forty (40) rows will be deleted from the table.','The transaction will restart.','No rows will be deleted from the table.'],'D','Sifat atomicity transaksi memastikan seluruh perubahan dibatalkan (rollback) jika transaksi gagal di tengah jalan.');
+const FI=['Foreign key','Clustered Index','Nonclustered index'];
+Q1.push({id:48,domain:dR,type:'match',text:'HOTSPOT: You have the following table. Use the drop-down menus to select the answer choice that completes each statement.',extra:tbl(['FlightNumber','Airline'],[[1,'Blue Yonder Airlines'],[2,`Margie's Travel`],[3,'Northwind Traders']]),rows:[{label:'Adding a [ ? ] on the FlightNumber column physically sorts rows in the table by FlightNumber.',options:FI,correct:'Clustered Index'},{label:'Adding a [ ? ] on the Airline column retrieves data faster, but will not physically sort rows in the table by Airline.',options:FI,correct:'Nonclustered index'}],expl:'Clustered index menentukan urutan fisik data (hanya satu per tabel); nonclustered index mempercepat pencarian tanpa mengubah urutan fisik.'});
+
+const DOMAIN_LABEL={core:'Konsep Dasar Basis Data',storage:'Penyimpanan & Tipe Data',relational:'Konsep Relasional & Normalisasi',manage:'Manajemen & Keamanan Basis Data'};
+/* ===== AKHIR PAKET 1 ===== */
+
+/* =====================================================================
+   PAKET 2 — Latihan 2: DML, DDL, Keamanan & Transaksi (30 soal)
+   ===================================================================== */
+const Q2=[];
+const sq2=(id,d,text,o,c,e,x,code)=>Q2.push({id,domain:d,type:'single',text,options:opt(o),correct:c,expl:e,extra:x,codeOpts:!!code});
+const mq2=(id,d,text,o,c,e,x)=>Q2.push({id,domain:d,type:'multi',chooseCount:2,text,options:opt(o),correct:c,expl:e,extra:x});
+const mq3=(id,d,text,o,c,e,x)=>Q2.push({id,domain:d,type:'multi',chooseCount:3,text,options:opt(o),correct:c,expl:e,extra:x});
+
+sq2(1,dM,'You need to enable a new employee to authenticate to your database.\nWhich command should you use?',['ALLOW USER','CREATE USER','ADD USER','INSERT USER','ALTER USER'],'B','CREATE USER adalah perintah DCL/DDL standar untuk membuat akun login baru pada database.');
+sq2(2,dR,'You have the following table definition:\n\nCREATE TABLE Road\n(RoadID INTEGER NOT NULL,\nDistance INTEGER NOT NULL)\n\nThe Road table contains the following data. You execute the following statement:\nINSERT INTO Road VALUES (1234, 36)\nWhat is the result?',['an error stating that NULL values are not allowed','a new row in the table','an error stating that duplicate IDs are not allowed','a syntax error'],'B','Tidak ada PRIMARY KEY atau UNIQUE pada RoadID, jadi NOT NULL saja tidak mencegah duplikasi. Baris baru tetap berhasil disisipkan.',
+ tbl(['RoadID','Distance'],[[1234,22],[1384,34]]));
+sq2(3,dM,'One reason to create a stored procedure is to:',['Improve performance.','Minimize storage space.','Bypass case sensitivity requirements.','Give the user control of the query logic'],'A','Stored procedure sudah dikompilasi dan disimpan di server, sehingga eksekusi berulang menjadi lebih cepat (meningkatkan performa).');
+sq2(4,dM,'Which permission does a user need in order to run a stored procedure?',['EXECUTE','ALLOW','CALL','RUN'],'A','Izin EXECUTE diperlukan agar seorang user dapat menjalankan stored procedure.');
+sq2(5,dM,'You have a table named Product. You create a view that includes all the products from the Product table that are in the Furniture category.\nYou execute a statement on the Product table that deletes all the products in the Furniture category.\nAfter you execute the statement, the result set of the view is:',['Empty','Deleted','Unchanged','Archived'],'A','View selalu mengambil data secara langsung (live) dari tabel dasarnya. Karena semua baris Furniture di tabel sudah dihapus, hasil view menjadi kosong.');
+sq2(6,dM,'You are writing an SQL statement to retrieve rows from a table.\nWhich data manipulation language (DML) command should you use?',['READ','SELECT','OUTPUT','GET'],'B','SELECT adalah perintah DML standar untuk mengambil/menampilkan baris data dari tabel.');
+sq2(7,dM,'Which command should you use to add a column to an existing table?',['MODIFY','ALTER','UPDATE','INSERT','CHANGE'],'B','ALTER TABLE ... ADD digunakan untuk menambahkan kolom baru pada tabel yang sudah ada.');
+sq2(8,dM,`You have a table that contains information about all students in your school.\nWhich SQL keyword should you use to change a student's first name in the table?`,['UPDATE','CHANGE','SELECT','INSERT'],'A','UPDATE digunakan untuk mengubah nilai kolom pada baris yang sudah ada, seperti mengganti nama depan siswa.');
+sq2(9,dM,'You need to populate a table named EmployeeCopy with data from an existing table named Employee.\nWhich statement should you use?',
+ ["SELECT *\n  INTO EmployeeCopy\nSELECT *\n  FROM Employee","INSERT *\n  FROM Employee\n  INTO EmployeeCopy","COPY * INTO Employee\n  SELECT *\n  FROM Employee","INSERT INTO EmployeeCopy\n  SELECT *\n  FROM Employee"],
+ 'D','INSERT INTO ... SELECT ... FROM adalah sintaks standar untuk menyalin/mengisi tabel dari hasil query tabel lain.',null,true);
+sq2(10,dM,'Which command should you use to remove a table from a database?',['REMOVE TABLE','UPDATE TABLE','DROP TABLE','DELETE TABLE'],'C','DROP TABLE digunakan untuk menghapus seluruh tabel beserta strukturnya dari database.');
+sq2(11,dM,'Which category of SQL statements is used to add, remove, and modify database structures?',['Data access language (DAL)','Data manipulation language (DML)','Data control language (DCL)','Data definition language (DDL)'],'D','DDL (Data Definition Language) mencakup CREATE, ALTER, dan DROP untuk mendefinisikan struktur database.');
+sq2(12,dM,'You have a table named Student that contains 100 rows. Some of the rows have a NULL value in the FirstName column.\nYou execute the following statement:\n\nDELETE FROM Student\n\nWhat is the result?',['All rows in the table will be deleted.','All rows containing a NULL value in the FirstName column will be deleted.','You will receive an error message.','All rows and the table definition will be deleted.'],'A','DELETE tanpa klausa WHERE menghapus seluruh baris pada tabel, terlepas dari nilai NULL pada kolom manapun. Struktur tabel tetap ada.');
+sq2(13,dM,'Which database term is used to describe the process of applying a backup to a damaged or corrupt database?',['Recover','Restore','Commit','Attach'],'B','"Restore" adalah istilah baku untuk menerapkan backup ke database yang rusak atau corrupt.');
+sq2(14,dR,`You have a table named Product that contains the following data.\nThe ProductID column is the primary key. The CategoryID column is a foreign key to a separate table named Category.\nYou execute the following statement:\n\nINSERT INTO Product\nVALUES (3296, 'Table', 4444)\n\nWhat is the result?`,['a foreign key constraint violation','a syntax error','a new row in the Product table','a primary key constraint violation','a new row in the Category table'],'D','ProductID 3296 sudah ada pada tabel (Spoon). Karena ProductID adalah primary key yang harus unik, penyisipan ini melanggar primary key constraint.',
+ tbl(['ProductID','ProductName','CategoryID'],[[3296,'Spoon',2222],[1114,'Chair',4444]]));
+sq2(15,dM,'You have a table named Customer. You need to add a new column named District.\nWhich statement should you use?',
+ ['MODIFY TABLE Customer ADD\n  (District INTEGER)','ALTER TABLE Customer MODIFY\n  (District INTEGER)','MODIFY TABLE Customer\n  (District INTEGER)','ALTER TABLE Customer ADD\n  (District INTEGER)'],
+ 'D','ALTER TABLE ... ADD adalah sintaks yang benar untuk menambahkan kolom baru pada tabel yang sudah ada.',null,true);
+sq2(16,dM,'You need to remove a view named EmployeeView from your database.\nWhich statement should you use?',['DELETE VIEW EmployeeView','DELETE EmployeeView','DROP EmployeeView','DROP VIEW EmployeeView'],'D','DROP VIEW adalah sintaks standar untuk menghapus sebuah view dari database.');
+sq2(17,dR,'You delete rows in a table named Order. The corresponding rows in the OrderItem table are automatically deleted. This process is an example of a/an:',['Inherited delete','Cascade delete','Functional delete','Waterfall delete','Domino delete'],'B','Penghapusan otomatis pada tabel terkait ketika baris induk dihapus disebut cascade delete (ON DELETE CASCADE).');
+sq2(18,dM,`You need to insert two new products into the Product table. The first product is named Book and has an ID of 125. The second product is named Movie and has an ID of 126.\nWhich statement should you use?`,
+ ["INSERT INTO Product\n  VALUES (ID = 125, 126) (Name = 'Book', 'Movie')","INSERT INTO Product (ID, Name)\n  VALUES (125, 'Book')\nINSERT INTO Product (ID, Name)\n  VALUES (126, 'Movie')","INSERT 125, 126, 'Book', 'Movie'\n  INTO Product","INSERT NEW ID = 125 AND 126, Name = 'Book' AND 'Movie'\n  INTO Product","INSERT NEW ID = 125, Name = 'Book'\n  INTO Product\nINSERT NEW ID = 126, Name = 'Movie'\n  INTO Product"],
+ 'B','Setiap baris baru disisipkan dengan pernyataan INSERT INTO ... VALUES terpisah, masing-masing menyebutkan kolom dan nilainya secara eksplisit.',null,true);
+sq2(19,dS,'You are creating a table to store customer data. The AccountNumber column uses values that always consist of one letter and four digits. Which data type should you use for the AccountNumber column?',['CHAR','BYTE','DOUBLE','SMALLINT'],'A','Panjang nilai selalu tetap (1 huruf + 4 digit = 5 karakter) dan bersifat alfanumerik, sehingga CHAR paling sesuai.');
+sq2(20,dM,'What is one difference between an update statement and a delete statement?',['An update statement can change only one row.','A delete statement cannot use a where clause.','An update statement does not remove rows from a table.','A delete statement works only within a stored procedure.'],'C','UPDATE hanya mengubah nilai kolom pada baris yang ada dan tidak pernah menghapus baris, berbeda dengan DELETE.');
+mq3(21,dM,'What are three valid data manipulation language (DML) commands? (Choose three.)',['INSERT','COMMIT','DELETE','OUTPUT','UPDATE'],['A','C','E'],'INSERT, DELETE, dan UPDATE adalah perintah DML yang sah. COMMIT termasuk TCL, dan OUTPUT bukan perintah DML standar.');
+sq2(22,dM,'You execute a statement inside a transaction to delete 100 rows from a table. The transaction fails after only 40 rows are deleted.\nWhat is the result in the database?',['The table will be corrupted.','Forty (40) rows will be deleted from the table.','The transaction will restart.','No rows will be deleted from the table.'],'D','Sifat atomicity transaksi memastikan seluruh perubahan dibatalkan (rollback) jika transaksi gagal di tengah jalan, sehingga tidak ada baris yang terhapus.');
+sq2(23,dM,`You have the following table definition:\n\nCREATE TABLE Product\n(ProductID INTEGER,\nName VARCHAR(20))\n\nYou need to insert a new product. The product's name is Plate and the product's ID is 12345.\nWhich statement should you use?`,
+ ["INSERT INTO Product\n  VALUES (ProductID = 12345, Name = 'Plate')","INSERT NEW ProductID = 12345, Name = 'Plate'\n  INTO Product","INSERT 12345, 'Plate'\n  INTO Product","INSERT INTO Product (ProductID, Name)\n  VALUES (12345, 'Plate')"],
+ 'D','Menyebutkan daftar kolom secara eksplisit lalu VALUES yang sesuai urutannya adalah sintaks INSERT yang benar dan aman.',null,true);
+sq2(24,dM,'This question requires that you evaluate the underlined text to determine if it is correct.\nThe CREATE TABLE command removes one or more table definitions and all data, indexes, triggers, constraints, and permission specifications for those tables.\n\nReview the underlined text. If it makes the statement correct, select "No change is needed." If the statement is incorrect, select the answer choice that makes the statement correct.',['No change is needed','DROP TABLE','TRUNCATE TABLE','ALTER TABLE'],'B','Yang menghapus definisi tabel beserta seluruh data, indeks, trigger, constraint, dan hak aksesnya adalah DROP TABLE, bukan CREATE TABLE.');
+sq2(25,dM,'This question requires that you evaluate the underlined text to determine if it is correct.\nUse the ALTER statement to add a new table in a database.\n\nReview the underlined text. If it makes the statement correct, select "No change is needed." If the statement is incorrect, select the answer choice that makes the statement correct.',['No change is needed','UPDATE','INSERT','CREATE'],'D','Menambahkan tabel baru dilakukan dengan CREATE TABLE, bukan ALTER, yang digunakan untuk mengubah struktur tabel yang sudah ada.');
+sq2(26,dM,'You need to rename a column in a database table.\nWhich data definition language (DDL) statement should you use?',['ALTER','INSERT','CREATE','UPDATE'],'A','ALTER TABLE ... RENAME COLUMN adalah perintah DDL yang digunakan untuk mengganti nama kolom.');
+sq2(27,dM,'This question requires that you evaluate the underlined text to determine if it is correct.\nUse indexing to create, remove, or change database objects.\n\nReview the underlined text. If it makes the statement correct, select "No change is needed." If the statement is incorrect, select the answer choice that makes the statement correct.',['No change is needed.','Data manipulation language (DML) statements','Data definition language (DDL) statements','A unique constraint'],'C','Membuat, menghapus, atau mengubah objek database adalah fungsi dari pernyataan DDL (CREATE, DROP, ALTER), bukan indexing.');
+sq2(28,dM,'You have a database table named AddressInfo that contains the following columns.\nYou must insert the following record into the table: StreetAddress = "1234 Main Street", City = "Dallas", State = "TX", PostalCode = "75201".\nWhich statement should you use?',
+ ["INSERT INTO AddressInfo ('1234 Main Street','Dallas','TX','75201')\n  VALUES ([StreetAddress],[City],[State],[PostalCode])","INSERT INTO AddressInfo ([StreetAddress],[City],[State],[PostalCode])\n  VALUES ('1234 Main Street','Dallas','TX','75201')","INSERT INTO AddressInfo\n  VALUES ('1234 Main Street','Dallas','TX','75201')","UPDATE AddressInfo SET [StreetAddress]='1234 Main Street',[City]='Dallas',\n  [State]='TX',[PostalCode]='75201'"],
+ 'B','Menyebutkan nama kolom secara eksplisit sebelum VALUES adalah praktik INSERT yang benar dan tidak bergantung pada urutan kolom di tabel.',
+ tbl(['Kolom','Tipe data'],[['StreetAddress','varchar(255), null'],['City','varchar(255), null'],['State','varchar(2), null'],['PostalCode','varchar(15), null']]),true);
+sq2(29,dM,'You need to delete a database table.\nWhich data definition language (DDL) keyword should you use',['ALTER','DELETE','DROP','TRUNCATE'],'C','DROP adalah kata kunci DDL yang digunakan untuk menghapus seluruh tabel dari database.');
+sq2(30,dR,`Your class project requires that you help a charity to create a website that registers volunteers.\nThe website must store the following data about the volunteers:\n• Given name\n• Surname\n• Telephone number\n• Email address\n\nYou need to recommend a correct way to store the data.\nWhat do you recommend?`,['Create a table that contains columns that are named given name, surname, phone number, and email.','Create a table that contains rows that are named given name, surname, phone number, and email.','Create a view that contains columns that are named given name surname, phone number, and email.','Create a view that contains rows that are named given name surname, phone number, and email'],'A','Setiap atribut volunteer harus menjadi kolom pada sebuah tabel dasar (bukan view), dengan setiap volunteer sebagai satu baris.');
+
+/* ===== AKHIR PAKET 2 ===== */
+
+/* =====================================================================
+   PAKET 3 — Latihan 3: SQL Querying & Studi Kasus (25 soal)
+   Sumber: Bank Soal & Kunci Jawaban Basis Data
+   ===================================================================== */
+const dQ='query';
+const Q3=[];
+const sq3=(id,d,text,o,c,e,x,code)=>Q3.push({id,domain:d,type:'single',text,options:opt(o),correct:c,expl:e,extra:x,codeOpts:!!code});
+const mq3b=(id,d,text,o,c,e,x)=>Q3.push({id,domain:d,type:'multi',chooseCount:2,text,options:opt(o),correct:c,expl:e,extra:x});
+
+sq3(1,dQ,`You need to create a report of data in the students table. The report must meet the following requirements:\n• Display all students who enrolled on or after June 1, 2020.\n• Display all students who graduated in 2020.\n• Return the result set in order of enrollment, with the most recent enrollment date first.\n\nenrollment_date specifies the enrollment date. graduation_date specifies the graduation date. An academic status of 'Graduated' indicates that a student has graduated. Which query meets the requirements?`,
+ ["SELECT * FROM students WHERE enrollment_date >= '2020-06-01' OR\n  (academic_status = 'Graduated' AND graduation_date >= '2020-01-01')\n  ORDER BY enrollment_date DESC;","SELECT * FROM students WHERE enrollment_date >= '2020-06-01'\n  AND academic_status = 'Graduated' AND graduation_date >= '2020-01-01'\n  ORDER BY enrollment_date ASC;","SELECT * FROM students WHERE enrollment_date >= '2020-06-01' OR\n  academic_status = 'Graduated' ORDER BY enrollment_date DESC;","SELECT * FROM students WHERE enrollment_date >= '2020-06-01'\n  ORDER BY enrollment_date;"],
+ 'A',`Syarat pertama membutuhkan enrollment_date >= 2020-06-01. Syarat kedua digabungkan dengan logika OR untuk mencakup siswa yang lulus di tahun 2020 (graduation_date >= 2020-01-01). Pengurutan dari yang paling baru menggunakan ORDER BY enrollment_date DESC.`,null,true);
+sq3(2,dQ,`You need to set up a database to provide a view of North American mammals (NorthAmericanMammals) from the Animal table, filtered by Region and Type. Which statement completes the syntax correctly?`,
+ ["CREATE VIEW NorthAmericanMammals AS\n  SELECT * FROM Animal\n  WHERE Region = 'North America' AND Type = 'Mammal';","CREATE TABLE NorthAmericanMammals AS\n  SELECT * FROM Animal\n  WHERE Region = 'North America' AND Type = 'Mammal';","CREATE VIEW NorthAmericanMammals AS\n  SELECT * FROM Animal\n  WHERE Region = 'North America' OR Type = 'Mammal';","SELECT VIEW NorthAmericanMammals FROM Animal\n  WHERE Region = 'North America' AND Type = 'Mammal';"],
+ 'A','Sintaks pembuatan view dalam SQL menggunakan klausa CREATE VIEW <NamaView> AS SELECT ...; kondisi memfilter wilayah North America DAN jenis Mammal sekaligus, sehingga harus memakai AND, bukan OR.',null,true);
+sq3(3,dQ,`A table named PlayerStat contains PlayerID (INT, NOT NULL), TeamID (INT, NOT NULL), GameDate (DATETIME, NULL), and Point (INT, NULL). You need to display the total number of points for each player on team 12. Which query completes the task?`,
+ ["SELECT PlayerID, SUM(Point)\n  FROM PlayerStat\n  WHERE TeamID = 12\n  GROUP BY PlayerID;","SELECT PlayerID, SUM(Point)\n  FROM PlayerStat\n  GROUP BY TeamID\n  WHERE TeamID = 12;","SELECT PlayerID, Point\n  FROM PlayerStat\n  WHERE TeamID = 12\n  ORDER BY PlayerID;","SELECT SUM(Point)\n  FROM PlayerStat\n  WHERE TeamID = 12;"],
+ 'A','Untuk menghitung total poin per pemain, gunakan fungsi agregasi SUM(Point) dan kelompokkan berdasarkan pemain dengan GROUP BY PlayerID. Filter tim dilakukan dengan WHERE TeamID = 12 (WHERE harus mendahului GROUP BY).',null,true);
+Q3.push({id:4,domain:dC,type:'tf',text:'For each statement regarding table rules, select True or False.',rows:[{label:'Each value in a field in a table must be unique.',correct:false},{label:'Each row in a table must be unique.',correct:true},{label:'Each column name in a table must be unique.',correct:true}],expl:'Nilai dalam kolom/field tidak harus unik kecuali ada constraint UNIQUE/PRIMARY KEY (False). Setiap baris dalam tabel relasional harus dapat dibedakan/unik (True). Setiap nama kolom dalam satu tabel harus unik (True).'});
+sq3(5,dM,`You have a table named Student that contains 100 rows. Some of the rows have a NULL value in the FirstName column.\nYou execute the following statement:\nDELETE FROM Student;\nWhat is the result?`,['All rows containing a NULL value in the FirstName column will be deleted.','All rows in the table will be deleted.','You will receive an error message.','All rows and the table definition will be deleted.'],'B','DELETE FROM Student; tanpa klausa WHERE akan menghapus seluruh data/baris di dalam tabel Student. Struktur/definisi tabel itu sendiri tetap ada (tidak ikut terhapus).');
+mq3b(6,dM,`You have a database table named dbo.AddressInfo with columns StreetAddress (varchar(255)), City (varchar(255)), State (varchar(2)), PostalCode (varchar(15)). You must insert the record: StreetAddress = '1234 Main Street', City = 'Dallas', State = 'TX', PostalCode = '75201'. Which two SQL statements can you use? (Choose two.)`,
+ ["INSERT INTO AddressInfo (StreetAddress, City, State, PostalCode)\n  VALUES ('1234 Main Street', 'Dallas', 'TX', '75201');","INSERT INTO AddressInfo\n  VALUES ('1234 Main Street', 'Dallas', 'TX', '75201');","INSERT INTO AddressInfo ('1234 Main Street', 'Dallas', 'TX', '75201')\n  VALUES (StreetAddress, City, State, PostalCode);","UPDATE AddressInfo SET StreetAddress = '1234 Main Street', City = 'Dallas',\n  State = 'TX', PostalCode = '75201';"],
+ ['A','B'],'Pernyataan A menyertakan daftar nama kolom secara eksplisit (best practice). Pernyataan B tidak menyertakan daftar kolom, tetapi memasukkan nilai sesuai urutan posisi kolom pada tabel. Keduanya adalah sintaks INSERT yang valid.');
+sq3(7,dR,'You create a table which displays winners of past pet shows with columns [Event, Year, PetID, Birthdate, City], where Event and Year together form the primary key. Which column prevents the table from being in Third Normal Form (3NF)?',['Birthdate','City','Event','Year'],'A','Syarat 3NF adalah tidak boleh ada ketergantungan transitif (non-key attribute tergantung pada non-key attribute lain). Birthdate bergantung pada PetID (bukan pada primary key komposit Event+Year), sehingga menyebabkan ketergantungan transitif.');
+sq3(8,dQ,`A database table named Cars contains 8 rows:\n1. Red, Japan, Sedan\n2. Red, USA, Truck\n3. Silver, Japan, Minivan\n4. Red, Japan, Hatchback\n5. Black, Japan, Compact\n6. Silver, Germany, SUV\n7. Black, USA, Convertible\n8. Black, Germany, Hybrid\n\nYou execute:\nSELECT * FROM Cars c WHERE c.Origin <> 'USA' AND c.Color = 'Black';\nHow many rows are returned?`,['0','1','2','3'],'C',`Baris yang memenuhi kriteria (Origin BUKAN 'USA' DAN Color adalah 'Black'): baris 5 (Black, Japan, Compact) dan baris 8 (Black, Germany, Hybrid). Total = 2 baris.`);
+sq3(9,dQ,'You need to display the flight numbers of flights sorted by the most recent arrival time. Table Flight contains fields: FlightID, FlightNumber, OriginAirport, DestinationAirport, DepartureTime, ArrivalTime. Which query completes the task?',
+ ["SELECT FlightNumber\n  FROM Flight\n  ORDER BY ArrivalTime DESC;","SELECT FlightNumber\n  FROM Flight\n  ORDER BY ArrivalTime ASC;","SELECT FlightNumber\n  FROM Flight\n  GROUP BY ArrivalTime DESC;","SELECT FlightNumber\n  FROM Flight\n  WHERE ArrivalTime DESC;"],
+ 'A','Untuk mengurutkan dari waktu kedatangan yang paling baru/terakhir ke yang lama, gunakan ORDER BY ArrivalTime DESC. GROUP BY dan WHERE tidak dapat menerima kata kunci pengurutan DESC seperti itu.',null,true);
+sq3(10,dQ,'You have a table named Employee that includes columns EmployeeID and EmployeeName. Which statement should you use to return the total number of rows in the table?',['SELECT COUNT(rows) FROM Employee;','SELECT COUNT(EmployeeID) FROM Employee;','SELECT * FROM Employee;','SELECT COUNT(*) FROM Employee;'],'D','Fungsi COUNT(*) digunakan untuk menghitung jumlah total baris/record di dalam tabel, termasuk baris yang berisi nilai NULL.');
+sq3(11,dQ,'You execute the following query:\nSELECT EmployeeID, FirstName, DepartmentName FROM Employee, Department;\nThis type of operation is called a/an:',['Outer join','Intersection','Cartesian product','Union'],'C','Menggabungkan dua tabel tanpa klausa WHERE atau kriteria JOIN akan menghasilkan Cartesian Product (Cross Join), di mana setiap baris tabel pertama dipasangkan dengan setiap baris tabel kedua.');
+sq3(12,dM,`You need to disable User1's access to view the data in the Customer table. Which statement should you use?`,['REVOKE SELECT ON Customer FROM User1;','REVOKE User1 FROM Customer;','REMOVE SELECT ON Customer FROM User1;','REMOVE User1 FROM Customer;'],'A','Perintah DCL (Data Control Language) untuk mencabut hak akses yang telah diberikan sebelumnya adalah REVOKE <privilege> ON <object> FROM <user>.');
+sq3(13,dQ,'Which query returns a result set of orders placed after January 1, 2017, for all states except California (CA)?',
+ ["SELECT * FROM orders WHERE order_date > '2017-01-01' OR ship_state <= 'CA';","SELECT * FROM orders WHERE order_date > '2017-01-01' AND ship_state <> 'CA';","SELECT * FROM orders WHERE order_date > '2017-01-01' OR ship_state LIKE 'CA';","SELECT * FROM orders WHERE order_date > '2017-01-01' AND ship_state = 'CA';"],
+ 'B',`Kondisi "setelah 1 Jan 2017" ditulis order_date > '2017-01-01'. Kondisi "semua negara bagian kecuali California" ditulis ship_state <> 'CA'. Keduanya harus digabungkan dengan operator AND, bukan OR.`,null,true);
+sq3(14,dM,'Which SQL statement is a Data Manipulation Language (DML) statement?',["INSERT INTO Employee VALUES ('Jack Smith');","ALTER TABLE Employee ADD EmployeeName VARCHAR(200);","CREATE TABLE Employee (EmployeeID INT);","DROP TABLE Employee;"],'A','DML (Data Manipulation Language) digunakan untuk memanipulasi data di dalam tabel (INSERT, UPDATE, DELETE, SELECT). Pilihan lainnya merupakan perintah DDL (Data Definition Language).',null,true);
+Q3.push({id:15,domain:dM,type:'tf',text:'For each statement, select True or False.',rows:[{label:'You can delete data by using a stored procedure.',correct:true},{label:'A function must have a return value.',correct:true},{label:'A stored procedure must have a return value.',correct:false}],expl:'Stored procedure dapat menjalankan perintah DML seperti DELETE (True). User-Defined Function (UDF) wajib mengembalikan nilai/return value (True). Stored procedure tidak wajib mengembalikan nilai (False).'});
+sq3(16,dQ,`You create a table named LoanedBooks containing [Name, City, Books]. There are two rows named Harry: one in New York and one in San Francisco. Harry in San Francisco returns your books. Which statement will correctly update your table?`,
+ ["INSERT INTO LoanedBooks SET Books = 0 WHERE Name = 'Harry';","UPDATE LoanedBooks SET Books = 0 WHERE Name = 'Harry' AND City = 'San Francisco';","UPDATE LoanedBooks SET Books = 0 WHERE Name IN ('Harry', 'San Francisco');","DELETE FROM LoanedBooks WHERE Books = 3;"],
+ 'B','Sintaks memperbarui data adalah UPDATE <Tabel> SET <Kolom=Nilai> WHERE <Kondisi>. Karena ada dua baris bernama Harry di tabel, kondisi WHERE harus menyertakan City = San Francisco agar hanya baris yang tepat yang diperbarui.',null,true);
+sq3(17,dM,'You have a table named Product. You create a view that includes all the products from the Product table that are in the Furniture category. You execute a statement on the Product table that deletes all the products in the Furniture category. After you execute the statement, the result set of the view is:',['Empty','Deleted','Unchanged','Archived'],'A','View tidak menyimpan data secara fisik melainkan berupa query virtual yang selalu mengambil data langsung dari tabel dasarnya. Karena semua baris Furniture di tabel sudah dihapus, hasil view menjadi kosong (empty).');
+sq3(18,dR,'You have a table named Customer. You need to create a new column named District that stores integer values. Which statement should you use?',
+ ['ALTER TABLE Customer ADD District INTEGER;','MODIFY TABLE Customer ADD (INTEGER District);','ALTER TABLE Customer ADD (INTEGER District);','ALTER TABLE Customer MODIFY (District INTEGER);'],
+ 'A','Sintaks standar penambahan kolom baru pada tabel yang sudah ada adalah ALTER TABLE <NamaTabel> ADD <NamaKolom> <TipeData>, tanpa tanda kurung mengelilingi nama dan tipe data.',null,true);
+sq3(19,dQ,`The Products table contains columns: ItemNumber, ItemName, ItemDescription, Price. Which query will return ItemName and Price when ItemDescription contains the word 'Chocolate'?`,
+ ["SELECT ItemName, Price FROM Products WHERE ItemDescription LIKE '%Chocolate%';","SELECT ItemName, Price FROM Products WHERE ItemDescription IN ('Chocolate');","SELECT ItemName, Price FROM Products WHERE ItemDescription = 'Chocolate';","SELECT ItemName, Price FROM Products WHERE ItemDescription LIKE 'Chocolate';"],
+ 'A',`Pencarian kata/substring di dalam teks menggunakan wildcard '%' di awal dan akhir teks bersama operator LIKE ('%Chocolate%'), agar kata tersebut ditemukan di mana pun posisinya dalam kolom.`,null,true);
+sq3(20,dQ,'A stored procedure contains a query concatenating Prefix and FirstName columns using the + operator. The stored procedure returns all NULL values. You verify that there is data in the Person table. What is likely the cause of this problem?',['The plus (+) operator cannot be used to append character data.','You must specify the JOIN keyword in the SELECT statement.','The Prefix or FirstName columns have NULL values.','You must specify the NULLIF keyword in the query.'],'C',`Dalam SQL Server, penggabungan (concatenation) string dengan nilai NULL menggunakan operator '+' akan menghasilkan NULL ('Text' + NULL = NULL).`);
+sq3(21,dR,'Which feature does a relational database use to ensure that data entered into a column is valid?',['An attribute','A primary key','A constraint','An index'],'C','Constraint (seperti CHECK, NOT NULL, FOREIGN KEY, UNIQUE) digunakan untuk membatasi tipe/nilai data yang dapat dimasukkan ke dalam tabel guna menjaga integritas data.');
+sq3(22,dQ,`You are the database admin for a university that stores student information in students and course information in courses. You execute:\nSELECT students.name, courses.name FROM students OUTER JOIN courses WHERE students.courseID = courses.courseID;\nThe query returns an error. How should you correct the query?`,
+ ["SELECT students.name, courses.name FROM students INNER JOIN courses\n  WHERE students.courseID = courses.courseID;","SELECT students.name, courses.name FROM students INNER JOIN ON courses\n  WHERE students.courseID = courses.courseID;","SELECT students.name, courses.name FROM students INNER JOIN ON\n  students.courseID = courses.courseID;","SELECT students.name, courses.name FROM students INNER JOIN courses\n  ON students.courseID = courses.courseID;"],
+ 'D','Sintaks JOIN yang valid membutuhkan kata kunci ON untuk menentukan kondisi relasi antar tabel (students.courseID = courses.courseID), diletakkan setelah nama tabel yang di-JOIN.',null,true);
+sq3(23,dR,'You are creating a database table named Student to store ID, Name, and Age. Which syntax should you use to create the object?',
+ ['CREATE ( TABLE Student (ID INT, Name VARCHAR(100), Age INT) );','CREATE TABLE Student (ID INT, Name VARCHAR(100), Age INT);','CREATE TABLE (ID INT, Name VARCHAR(100), Age INT);','CREATE Student (ID INT, Name VARCHAR(100), Age INT);'],
+ 'B','Sintaks pembuatan tabel standar DDL adalah CREATE TABLE <NamaTabel> (Kolom1 TipeData, Kolom2 TipeData, ...), lengkap dengan nama tabel setelah kata kunci TABLE.',null,true);
+sq3(24,dQ,`You need to change a volunteer's GivenName from 'Tia' to 'Kimberly' in the Volunteer table. Which statement should you choose?`,
+ ["UPDATE Volunteer SET GivenName = 'Kimberly' WHERE GivenName = 'Tia';","SET GivenName = 'Kimberly' FROM Volunteer WHERE GivenName = 'Tia';","UPDATE GivenName = 'Kimberly' FROM Volunteer WHERE GivenName = 'Tia';","SET Volunteer WHERE GivenName = 'Kimberly';"],
+ 'A','Perintah memperbarui baris data dalam SQL dimulai dengan kata kunci UPDATE <Tabel> SET <Kolom = NilaiBaru> WHERE <Kondisi>.',null,true);
+sq3(25,dQ,'Your database contains a table named Customer. You need to delete the record from the Customer table where CustomerID = 12345. Which statement should you use?',
+ ['DELETE CustomerID FROM Customer WHERE CustomerID = 12345;','UPDATE Customer DELETE WHERE CustomerID = 12345;','UPDATE CustomerID FROM Customer DELETE WHERE CustomerID = 12345;','DELETE FROM Customer WHERE CustomerID = 12345;'],
+ 'D','Sintaks penghapusan baris tertentu dalam DML adalah DELETE FROM <NamaTabel> WHERE <Kondisi>.',null,true);
+
+DOMAIN_LABEL.query='Query SQL (SELECT, JOIN, Agregasi)';
+/* ===== AKHIR PAKET 3 ===== */
+
+const SETS=[
+  {id:'set1',label:'Soal Latihan 1',desc:'Konsep dasar, kunci relasional, tipe data & normalisasi',q:Q1},
+  {id:'set2',label:'Soal Latihan 2',desc:'Perintah DML/DDL, keamanan, transaksi & desain tabel',q:Q2},
+  {id:'set3',label:'Soal Latihan 3',desc:'Query SQL, JOIN, agregasi & studi kasus basis data',q:Q3}
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
+const pad=n=>String(n).padStart(2,'0');
+const store={get(k){try{return JSON.parse(localStorage.getItem('dbq_'+k))}catch(e){return null}},set(k,v){try{localStorage.setItem('dbq_'+k,JSON.stringify(v))}catch(e){}}};
+const S={mode:'latihan',list:[],i:0,ans:{},checked:{},flag:new Set(),streak:0,left:3600,t0:0,timer:null,R:[]};
+const TYPE={single:'Pilihan ganda',multi:'Pilih dua',tf:'Benar / Salah',match:'Pencocokan'};
+const MOT=[`Kamu pasti bisa, ${NAMA}!`,'Pelan tapi pasti, satu soal satu langkah.','Salah hari ini, paham besok. Terus jalan!','Fokus, tarik napas, jawab dengan yakin.','Konsistensi mengalahkan bakat. Lanjut!',`Sedikit lagi, ${NAMA}. Jangan berhenti sekarang.`,'Setiap soal adalah tambahan poin kelulusan.','Bangga pada dirimu yang mau berlatih.'];
+const OKM=['Mantap!','Tepat sekali!','Keren, lanjut!','Sip, jawabanmu benar!'];
+const NOM=['Tidak apa-apa, baca penjelasannya ya.','Salah itu bagian dari belajar.','Catat dulu, nanti pasti ingat.'];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+$('nm').textContent=NAMA;
+
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===id));window.scrollTo({top:0})}
+let tt;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),1900)}
+
+/* ---------- penilaian ---------- */
+function score(q){
+  const a=S.ans[q.id];let e=0,m=1,none=a===undefined;
+  if(q.type==='single')e=a===q.correct?1:0;
+  else if(q.type==='multi'){const x=a||[];none=!x.length;e=x.length===q.correct.length&&q.correct.every(c=>x.includes(c))?1:0}
+  else{m=q.rows.length;const x=a||{};none=!Object.keys(x).length;q.rows.forEach((r,i)=>{if(x[i]===r.correct)e++})}
+  return{e,m,st:none?'empty':e===m?'correct':e>0?'partial':'wrong'};
+}
+function done(q){
+  const a=S.ans[q.id];if(a===undefined)return false;
+  return q.type==='single'?!!a:q.type==='multi'?a.length===q.chooseCount:Object.keys(a).length===q.rows.length;
+}
+
+/* ---------- isi soal (dipakai di ujian & tinjauan) ---------- */
+function body(q,a,rev){
+  let h=q.extra?`<div class="extra">${q.extra}</div>`:'';
+  const dis=rev?'disabled':'';
+  if(q.type==='single'||q.type==='multi'){
+    const sel=q.type==='single'?(a?[a]:[]):(a||[]),cor=[].concat(q.correct);
+    if(q.type==='multi')h+=`<p class="hint">Pilih tepat ${q.chooseCount} jawaban.</p>`;
+    h+='<div class="opts">'+q.options.map(([l,t])=>{
+      const s=sel.includes(l),c=cor.includes(l);let cls='opt'+(q.type==='single'?' radio':'')+(s?' sel':''),tag='';
+      if(rev){if(c){cls+=' ok';if(!s)tag='<em>Jawaban yang benar</em>'}else if(s)cls+=' no'}
+      const label=q.codeOpts?`<span class="code">${esc(t).replace(/\n/g,'<br>')}</span>`:esc(t);
+      return `<button type="button" class="${cls}" data-v="${l}" ${dis}><span class="mk">${s?'&#10003;':''}</span><span><b>${l}</b>${label}${tag}</span></button>`;
+    }).join('')+'</div>';
+  }else if(q.type==='tf'){
+    h+='<table class="tf"><tr><th>Pernyataan</th><th>True</th><th>False</th></tr>'+q.rows.map((r,i)=>{
+      const v=a&&a[i],st=rev?(v===r.correct?'ok':'no'):'';
+      return `<tr class="${st}"><td>${esc(r.label)}${rev&&v!==r.correct?`<div class="fix">Seharusnya: ${r.correct?'True':'False'}</div>`:''}</td>
+      <td><input type="radio" name="t${q.id}_${i}" data-r="${i}" data-v="1" ${v===true?'checked':''} ${dis}></td>
+      <td><input type="radio" name="t${q.id}_${i}" data-r="${i}" data-v="0" ${v===false?'checked':''} ${dis}></td></tr>`;
+    }).join('')+'</table>';
+  }else{
+    h+=q.rows.map((r,i)=>{
+      const v=(a&&a[i])||'',st=rev?(v===r.correct?'ok':'no'):'';
+      return `<div class="mrow ${st}"><span>${esc(r.label)}${rev&&v!==r.correct?`<div class="fix">Seharusnya: ${esc(r.correct)}</div>`:''}</span>
+      <select data-r="${i}" ${dis}><option value="">Pilih...</option>${r.options.map(o=>`<option ${v===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
+    }).join('');
+  }
+  return h;
+}
+
+/* ---------- alur ujian ---------- */
+function startRun(list,mode){
+  Object.assign(S,{mode,list,i:0,ans:{},checked:{},flag:new Set(),streak:0,t0:Date.now(),left:3600});
+  clearInterval(S.timer);
+  $('modeLbl').textContent=(mode==='ujian'?'Mode Ujian':'Mode Latihan')+' · '+S.setLabel;
+  $('navBtn').classList.remove('hide');
+  show('s-exam');updChip();
+  if(mode==='ujian')S.timer=setInterval(tick,1000);
+  render();
+}
+function tick(){S.left=Math.max(0,3600-Math.floor((Date.now()-S.t0)/1000));updChip();if(!S.left)finish()}
+function updChip(){
+  const c=$('chip');c.classList.remove('hide');
+  if(S.mode==='ujian'){c.textContent='⏱ '+pad(S.left/60|0)+':'+pad(S.left%60);c.classList.toggle('low',S.left<300)}
+  else{c.textContent='🔥 '+S.streak+' beruntun';c.classList.remove('low')}
+}
+function render(){
+  const q=S.list[S.i],rev=!!S.checked[q.id],n=S.list.length;
+  $('pl').textContent=`Soal ${S.i+1} / ${n}`;$('pf').style.width=((S.i+1)/n*100)+'%';
+  $('mot').textContent=MOT[S.i%MOT.length];
+  $('qb').textContent=`${TYPE[q.type]} · ${DOMAIN_LABEL[q.domain]}`;
+  const f=$('flag');f.classList.toggle('on',S.flag.has(q.id));f.textContent=S.flag.has(q.id)?'🚩 Ditandai':'🚩 Tandai';
+  $('qbody').innerHTML=`<p class="qt">${esc(q.text)}</p>`+body(q,S.ans[q.id],rev);
+  if(rev){
+    const s=score(q),m={correct:['ok','✅ Benar!'],partial:['gd',`🟡 Sebagian benar (${s.e}/${s.m})`],wrong:['no','❌ Belum tepat'],empty:['no','❌ Belum dijawab']}[s.st];
+    $('fb').innerHTML=`<div class="fb ${m[0]}"><b>${m[1]}</b><p>${esc(q.expl)}</p></div>`;
+  }else $('fb').innerHTML='';
+  $('prev').disabled=S.i===0;
+  $('next').innerHTML=S.i===n-1?'Tinjau &amp; selesai':'Berikutnya &rarr;';
+  bind(q);acts();
+}
+function bind(q){
+  const B=$('qbody');
+  B.onclick=e=>{
+    const b=e.target.closest('.opt');if(!b||S.checked[q.id])return;const v=b.dataset.v;
+    if(q.type==='single'){S.ans[q.id]=v;if(S.mode==='latihan')return check(q)}
+    else{let x=(S.ans[q.id]||[]).slice();if(x.includes(v))x=x.filter(y=>y!==v);else{if(x.length>=q.chooseCount)x.shift();x.push(v)}S.ans[q.id]=x}
+    render();
+  };
+  B.onchange=e=>{
+    const t=e.target;if(S.checked[q.id]||t.dataset.r===undefined&&t.tagName!=='SELECT')return;
+    const r=+t.dataset.r,x=Object.assign({},S.ans[q.id]);
+    if(t.tagName==='SELECT'){if(t.value)x[r]=t.value;else delete x[r]}else x[r]=t.dataset.v==='1';
+    S.ans[q.id]=x;acts();
+  };
+}
+function acts(){
+  const q=S.list[S.i];
+  $('chk').classList.toggle('hide',!(S.mode==='latihan'&&!S.checked[q.id]&&done(q)));
+  nav();
+}
+function check(q){
+  S.checked[q.id]=true;const s=score(q);
+  if(s.st==='correct'){S.streak++;toast(S.streak>=3?`🔥 ${S.streak} benar beruntun!`:pick(OKM))}
+  else{S.streak=0;toast(pick(NOM))}
+  updChip();render();
+}
+function nav(){
+  $('grid').innerHTML=S.list.map((q,i)=>{
+    const c=['cell'];
+    if(S.checked[q.id])c.push(score(q).st==='correct'?'okc':'noc');else if(done(q))c.push('ans');
+    if(S.flag.has(q.id))c.push('fl');if(i===S.i)c.push('cur');
+    return `<button class="${c.join(' ')}" data-i="${i}">${i+1}</button>`;
+  }).join('');
+}
+const drawer=$('drawer'),dback=$('dback');
+const openD=()=>{drawer.classList.add('open');dback.classList.add('open')},closeD=()=>{drawer.classList.remove('open');dback.classList.remove('open')};
+$('navBtn').onclick=openD;dback.onclick=closeD;
+$('grid').onclick=e=>{const b=e.target.closest('.cell');if(b){S.i=+b.dataset.i;closeD();render()}};
+$('prev').onclick=()=>{if(S.i>0){S.i--;render()}};
+$('next').onclick=()=>{if(S.i<S.list.length-1){S.i++;render()}else openD()};
+$('chk').onclick=()=>check(S.list[S.i]);
+$('flag').onclick=()=>{const id=S.list[S.i].id;S.flag.has(id)?S.flag.delete(id):S.flag.add(id);render()};
+$('submit').onclick=()=>{
+  const un=S.list.filter(q=>!done(q)).length;
+  if(un&&!confirm(`Masih ada ${un} soal yang belum terjawab lengkap. Tetap selesai sekarang?`))return;
+  closeD();finish();
+};
+document.addEventListener('keydown',e=>{
+  if(!$('s-exam').classList.contains('on')||/SELECT|INPUT/.test(e.target.tagName))return;
+  if(e.key==='ArrowRight')$('next').click();if(e.key==='ArrowLeft')$('prev').click();
+});
+$('go').onclick=()=>{
+  const mode=document.querySelector('input[name=mode]:checked').value;
+  const setEl=document.querySelector('input[name=setpick]:checked');
+  const setObj=SETS.find(x=>x.id===setEl.value)||SETS[0];
+  S.setId=setObj.id;S.setLabel=setObj.label;
+  let list=setObj.q.slice();if($('shuf').checked)list.sort(()=>Math.random()-.5);
+  startRun(list,mode);
+};
+
+/* ---------- hasil & tinjauan ---------- */
+function finish(){
+  clearInterval(S.timer);
+  const el=Math.floor((Date.now()-S.t0)/1000);
+  S.R=S.list.map(q=>({q,s:score(q)}));
+  const tot=S.R.reduce((a,r)=>a+r.s.m,0),got=S.R.reduce((a,r)=>a+r.s.e,0);
+  const pct=tot?got/tot:0,scaled=Math.round(pct*1000),pass=scaled>=700;
+  const bestKey='best_'+S.setId,prevBest=store.get(bestKey)||0;if(scaled>prevBest)store.set(bestKey,scaled);
+  $('modeLbl').textContent='Hasil latihan · '+S.setLabel;$('chip').classList.add('hide');$('navBtn').classList.add('hide');
+  $('resKick').textContent='Hasil latihanmu · '+S.setLabel;
+  $('sc').textContent=scaled;
+  const v=$('vd');v.textContent=pass?'LULUS':'BELUM LULUS';v.className='verdict '+(pass?'pass':'fail');
+  const M=pct>=.85?['🎉 Luar biasa!',`Hebat, ${NAMA}! Kamu sudah sangat siap. Pertahankan dengan mengulang sesekali.`]:
+    pct>=.7?['👏 Mantap, kamu lulus!',`Bagus sekali, ${NAMA}. Rapikan beberapa soal yang salah supaya nilaimu makin aman.`]:
+    pct>=.5?['💪 Sedikit lagi!',`Kamu sudah separuh jalan, ${NAMA}. Baca pembahasan soal yang salah, lalu coba lagi.`]:
+    ['🌱 Ini baru awal',`Jangan menyerah, ${NAMA}. Semua orang mulai dari sini. Pelajari pembahasannya, skormu pasti naik.`];
+  $('hl').textContent=M[0]+(scaled>prevBest&&prevBest>0?' Rekor baru!':'');$('msg').textContent=M[1];
+  $('m1').textContent=`${got} / ${tot}`;$('m2').textContent=Math.round(pct*100)+'%';
+  $('m3').textContent=pad(el/60|0)+':'+pad(el%60);$('m4').textContent=S.R.filter(r=>r.s.st==='empty').length;
+  const C=2*Math.PI*78,g=$('gfg');
+  g.style.stroke=pass?'var(--success)':'var(--danger)';g.setAttribute('stroke-dasharray',C);g.setAttribute('stroke-dashoffset',C);
+  requestAnimationFrame(()=>g.setAttribute('stroke-dashoffset',C*(1-pct)));
+  const D={};S.R.forEach(r=>{const d=D[r.q.domain]=D[r.q.domain]||{e:0,m:0};d.e+=r.s.e;d.m+=r.s.m});
+  $('dom').innerHTML='<b style="font-size:13px;color:var(--text-muted)">Kemampuan per domain</b>'.replace('<b','<div style="margin-bottom:10px"><b').replace('</b>','</b></div>')+
+    Object.keys(D).map(k=>{const p=Math.round(D[k].e/D[k].m*100);
+      return `<div><div class="t"><span>${DOMAIN_LABEL[k]}</span><span>${D[k].e}/${D[k].m} · ${p}%</span></div><div class="track"><i style="width:${p}%"></i></div></div>`}).join('');
+  const bad=S.R.filter(r=>r.s.st!=='correct');
+  const rw=$('redoWrong');rw.classList.toggle('hide',!bad.length);rw.textContent=`Latih ulang ${bad.length} soal yang salah`;
+  rw.onclick=()=>startRun(bad.map(r=>r.q),'latihan');
+  $('redoAll').onclick=()=>startRun((SETS.find(x=>x.id===S.setId)||SETS[0]).q.slice(),S.mode);
+  $('home').onclick=()=>{show('s-start');paintStart()};
+  buildReview();show('s-res');
+}
+function buildReview(){
+  const L={correct:'Benar',partial:'Sebagian',wrong:'Salah',empty:'Kosong'},cnt={correct:0,partial:0,wrong:0,empty:0};
+  S.R.forEach(r=>cnt[r.s.st]++);
+  const chips=[['all',`Semua (${S.R.length})`],['correct',`✅ Benar (${cnt.correct})`],['wrong',`❌ Salah (${cnt.wrong})`],['partial',`🟡 Sebagian (${cnt.partial})`],['empty',`⚪ Kosong (${cnt.empty})`]]
+    .filter(c=>c[0]==='all'||cnt[c[0]]);
+  const first=cnt.wrong?'wrong':cnt.partial?'partial':'all';
+  $('filters').innerHTML=chips.map(c=>`<button class="fl-b ${c[0]===first?'on':''}" data-f="${c[0]}">${c[1]}</button>`).join('');
+  $('rlist').innerHTML=S.R.map(({q,s},i)=>`<article class="card ri ${s.st}" data-st="${s.st}">
+    <div class="qh"><span>Soal ${i+1}</span><span class="badge ${s.st}">${L[s.st]}${s.st==='partial'?` ${s.e}/${s.m}`:''}</span></div>
+    <p class="qt">${esc(q.text)}</p>${body(q,S.ans[q.id],true)}
+    <div class="fb"><b>💡 Penjelasan</b><p>${esc(q.expl)}</p></div></article>`).join('');
+  const apply=f=>{
+    $('filters').querySelectorAll('.fl-b').forEach(b=>b.classList.toggle('on',b.dataset.f===f));
+    $('rlist').querySelectorAll('.ri').forEach(a=>a.classList.toggle('hide',f!=='all'&&a.dataset.st!==f));
+  };
+  $('filters').onclick=e=>{const b=e.target.closest('.fl-b');if(b)apply(b.dataset.f)};
+  apply(first);
+}
+
+function paintStart(){
+  $('setPick').innerHTML=SETS.map((st,i)=>`<label class="setc"><input type="radio" name="setpick" value="${st.id}" ${i===0?'checked':''}><div><b>${esc(st.label)}</b><span>${esc(st.desc)} · ${st.q.length} soal</span></div></label>`).join('');
+  const upd=()=>{
+    const id=(document.querySelector('input[name=setpick]:checked')||{}).value||SETS[0].id;
+    const st=SETS.find(x=>x.id===id)||SETS[0];
+    $('nq').textContent=st.q.length;
+    $('best').textContent=store.get('best_'+st.id)??'-';
+  };
+  $('setPick').onchange=upd;upd();
+}
+paintStart();
+})();
+</script>
+</body>
+</html>
